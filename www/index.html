@@ -1,0 +1,190 @@
+<!doctype html>
+<meta name=viewport content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>いろいろいる！</title>
+<link rel=stylesheet href="pico.css">
+<link rel=stylesheet href="iroiroiru.css">
+<script src=leaflet.js></script>
+<script src=leaflet.movingRotatedMarker.js></script>
+<aside class='pico modal-is-open modal-is-opening'>
+  <dialog id=overlay></dialog>
+  <div id=spinner></div>
+</aside>
+<template id=occurrenceTemplate>
+  <article>
+    <header>
+      <button aria-label=Close rel=prev></button>
+      <h3 class=scientificName></h3>
+      <p class=coordinates>
+      <p class=occurrenceID>
+    </header>
+    <main>
+      <div>
+        <p class=occurrenceRemarks>
+      </div>
+      <div>
+        <p class=locationRemarks>
+      </div>
+      <table>
+        <tr>
+          <th>Locality</th>
+          <td class=locality></td>
+        </tr>
+        <tr>
+          <th>Uncertainty in meters</th>
+          <td class=uncertaintyInMeters></td>
+        </tr>
+        <tr>
+          <th>Recorded by</th>
+          <td class=recordedBy></td>
+        </tr>
+        <tr>
+          <th>Identified by</th>
+          <td class=identifiedBy></td>
+        </tr>
+        <tr>
+          <th>Event date</th>
+          <td class=eventDate></td>
+        </tr>
+        <tr>
+          <th>Lifestage</th>
+          <td class=lifestage></td>
+        </tr>
+        <tr>
+          <th>Dataset</th>
+          <td class=datasetName></td>
+        </tr>
+      </table>
+    </main>
+    <footer>
+      <div class=grid>
+        <p class=source>source: <a class=gbifLink>gbif</a>
+        <p class=license>
+      </div>
+    </footer>
+  </article>
+</template>
+<header>
+  <h1>いろいろいる！</h1>
+</header>
+<div id=map></div>
+<script>
+  const map = L.map('map').setView([35.749, 139.805], 18);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    detectRetina: true,
+    minZoom: 5,
+    maxZoom: 20,
+  }).addTo(map);
+
+
+  const icons = Object.fromEntries(
+    ['Animalia', 'Chromista', 'Plantae', 'Fungi', 'Fallback'].map(name => [
+      name,
+      L.icon({
+        iconUrl: `images/${name.toLowerCase()}.png`,
+        iconSize: [32, 32],
+        iconAnchor: [16, 16],
+      })
+    ])
+  );
+
+  map.locate({ watch: true });
+
+  const group = L.featureGroup().addTo(map);
+  const you = L.marker([0, 0]);
+
+  let initialLocation = true;
+  map.on('locationfound', function(e) {
+    if(initialLocation) {
+      you.setLatLng(e.latlng) ;
+    } else {
+      you.slideTo(e.latlng, { duration: 500 });
+    }
+
+    const api = "http://localhost:8080/here";
+    // const api = "https://api.iroiroiru.jp/here";
+    const params = { lat: e.latlng.lat, lon: e.latlng.lng };
+    const query = new URLSearchParams(params).toString();
+
+
+    document.getElementById("spinner").setAttribute("aria-busy", true);
+    fetch(`${api}?${query}`).then(response => {
+      document.getElementById("spinner").setAttribute("aria-busy", false);
+      if (!response.ok) {
+        throw new Error("response not ok: " + response.statusText);
+      }
+      return response.json();
+    }).then(occurrences => {
+      group.clearLayers();
+      const template = document.getElementById('occurrenceTemplate');
+
+      const colors = [
+        "#FF5733", // Red-orange
+        "#33A1FF", // Light blue
+        "#2ECC71"  // Green
+      ];
+
+      occurrences.forEach((o, i) => {
+        const point = o.location.coordinates.reverse();
+        const uncertainty = o.coordinateUncertaintyInMeters || 1;
+
+        const opts = { radius: uncertainty, color: colors[i % colors.length] };
+        L.circle(point, opts).addTo(group);
+
+        const clone = template.content.cloneNode(true);
+        const setText = (sel, val) => {
+          const el = clone.querySelector(sel);
+          val ? el.textContent = val : el.parentElement.remove();
+        };
+
+        setText(".coordinates", point);
+        setText(".occurrenceRemarks", o.occurrenceRemarks);
+        setText(".locationRemarks", o.locationRemarks);
+        setText(".scientificName", o.acceptedScientificName);
+        setText(".locality", o.locality || o.verbatimLocality);
+        setText(".recordedBy", o.recordedBy);
+        setText(".identifiedBy", o.identifiedBy);
+        setText(".eventDate", o.eventDate);
+        setText(".license", o.license);
+        setText(".lifestage", o.lifestage);
+        setText(".datasetName", o.datasetName);
+        setText(".occurrenceID", o.occurrenceID);
+        setText(".uncertaintyInMeters", o.coordinateUncertaintyInMeters);
+
+        const uri = "https://www.gbif.org/occurrence/" + o.gbifID;
+        clone.querySelector(".gbifLink").href = uri;
+
+        const kingdom = o.kingdom;
+        const marker = L.marker(point, {
+          icon: icons[o.kingdom] || icons.Fallback
+        });
+
+
+        marker.on('click', function(e) {
+          const data = clone.cloneNode(true);
+          const modal = document.getElementById('overlay');
+          while (modal.firstChild) {
+            modal.removeChild(modal.firstChild);
+          }
+          const closer = data.querySelector('button');
+          closer.addEventListener('click', () => {
+            modal.close();
+          });
+          modal.appendChild(data);
+          modal.showModal();
+        });
+        marker.addTo(group);
+      });
+
+      if(initialLocation) {
+        you.addTo(map);
+        console.log("fitting bounds");
+        map.fitBounds(group.getBounds(), {
+          padding: [15, 15]
+        });
+        initialLocation = false;
+      }
+    });
+  });
+</script>
+
