@@ -101,8 +101,7 @@
       you.slideTo(e.latlng, { duration: 500 });
     }
 
-    const api = "http://localhost:8080/here";
-    // const api = "https://api.iroiroiru.jp/here";
+    const api = "https://api.iroiroiru.jp/here";
     const params = { lat: e.latlng.lat, lon: e.latlng.lng };
     const query = new URLSearchParams(params).toString();
 
