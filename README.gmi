@@ -34,3 +34,4 @@ iroiroiru consists of the following:
 * find more suitable free map tiles?
 * ingest data directly from a dwca
 * drop data with uncertainty > 250 meters? 100m? 500 feels too... something 🤔
+* handle vernacular names somehow
