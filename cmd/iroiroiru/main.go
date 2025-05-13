@@ -21,13 +21,6 @@ type PointQuery struct {
 	Lon float64 `form:"lon" binding:"required,min=-180,max=180"`
 }
 
-type Token struct {
-	Token      string    `bson:"token"`
-	GbifID     string    `bson:"gbifID"`
-	ValidAfter time.Time `bson:"validAfter"`
-	ValidUntil time.Time `bson:"validUntil"`
-}
-
 func here(c *gin.Context) {
 	var query PointQuery
 	err := c.ShouldBindQuery(&query)
