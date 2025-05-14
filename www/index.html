@@ -117,18 +117,9 @@
       group.clearLayers();
       const template = document.getElementById('occurrenceTemplate');
 
-      const colors = [
-        "#FF5733", // Red-orange
-        "#33A1FF", // Light blue
-        "#2ECC71"  // Green
-      ];
-
       occurrences.forEach((o, i) => {
         const point = o.location.coordinates.reverse();
         const uncertainty = o.coordinateUncertaintyInMeters || 1;
-
-        const opts = { radius: uncertainty, color: colors[i % colors.length] };
-        L.circle(point, opts).addTo(group);
 
         const clone = template.content.cloneNode(true);
         const setText = (sel, val) => {
