@@ -68,6 +68,52 @@
 </header>
 <div id=map></div>
 <script>
+  function visualizeUncertainty(marker, radius) {
+    let circle;
+
+    marker.on('mouseover', () => {
+      const latlng = marker.getLatLng();
+
+      circle = L.circle(latlng, {
+        radius: 0,
+        weight: 1
+      }).addTo(marker._map);
+
+      animateUncertainty(circle, radius, 300);
+    });
+
+    marker.on('mouseout', () => {
+      if(!circle) return;
+
+      animateUncertainty(circle, 0, 300, () => {
+        if(circle) {
+          marker._map.removeLayer(circle);
+        }
+        circle = null;
+      });
+    });
+  }
+
+  function animateUncertainty(circle, targetRadius, duration, oncomplete) {
+    const start = performance.now();
+    const initialRadius = circle.getRadius();
+
+    function step(timestamp) {
+      const elapsed = timestamp - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const radius = initialRadius + (targetRadius - initialRadius) * progress;
+      circle.setRadius(radius);
+
+      if(progress < 1) {
+        requestAnimationFrame(step);
+      } else if (oncomplete) {
+        oncomplete();
+      }
+    }
+
+    requestAnimationFrame(step);
+  }
+
   const map = L.map('map').setView([35.749, 139.805], 18);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
@@ -75,7 +121,6 @@
     minZoom: 5,
     maxZoom: 20,
   }).addTo(map);
-
 
   const icons = Object.fromEntries(
     ['Animalia', 'Chromista', 'Plantae', 'Fungi', 'Fallback'].map(name => [
@@ -101,7 +146,9 @@
       you.slideTo(e.latlng, { duration: 500 });
     }
 
-    const api = "https://api.iroiroiru.jp/here";
+    // const api = "https://api.iroiroiru.jp/here";
+    const api = "http://localhost:8080/here";
+
     const params = { lat: e.latlng.lat, lon: e.latlng.lng };
     const query = new URLSearchParams(params).toString();
 
@@ -117,18 +164,9 @@
       group.clearLayers();
       const template = document.getElementById('occurrenceTemplate');
 
-      const colors = [
-        "#FF5733", // Red-orange
-        "#33A1FF", // Light blue
-        "#2ECC71"  // Green
-      ];
-
       occurrences.forEach((o, i) => {
         const point = o.location.coordinates.reverse();
         const uncertainty = o.coordinateUncertaintyInMeters || 1;
-
-        const opts = { radius: uncertainty, color: colors[i % colors.length] };
-        L.circle(point, opts).addTo(group);
 
         const clone = template.content.cloneNode(true);
         const setText = (sel, val) => {
@@ -158,6 +196,9 @@
           icon: icons[o.kingdom] || icons.Fallback
         });
 
+        if(uncertainty > 1) {
+          visualizeUncertainty(marker, uncertainty);
+        }
 
         marker.on('click', function(e) {
           const data = clone.cloneNode(true);
