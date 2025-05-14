@@ -17,7 +17,7 @@ body > header {
 }
 h1 {
   color: #fff;
-  -webkit-text-stroke: 2px #000;
+  -webkit-text-stroke: 1px #000;
   margin-top: 10px;
   z-index: 1000;
   -webkit-user-select: none;
@@ -30,6 +30,8 @@ h1 {
 dialog .coordinates { color: #999999; }
 dialog .license { color: #999999; }
 dialog .source { text-align: left; }
+
+.pico th { font-weight: 700; }
 
 /* leaflet */
 
