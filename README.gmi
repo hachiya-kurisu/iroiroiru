@@ -22,9 +22,9 @@ right here, right now.
 
 iroiroiru consists of the following:
 
-* a few scripts for ingesting data into mongodb
-* a go api microservice
-* a very simple front-end allowing you to find occurrences close to where you're at
+* iroiroserve - a go api microservice
+* iroiroload - command line tool to ingest occurrence and multimedia data
+* iroiroview - minimalist front-end allowing you to find nearby occurrences
 
 ## todo
 
@@ -32,6 +32,6 @@ iroiroiru consists of the following:
 * show occurrence images (?) or images based on species (?)
 * improve icons
 * find more suitable free map tiles?
-* ingest data directly from a dwca
-* drop data with uncertainty > 250 meters? 100m? 500 feels too... something 🤔
 * handle vernacular names somehow
+* overlapping markers...
+* iroiroload: bulk insert...?
