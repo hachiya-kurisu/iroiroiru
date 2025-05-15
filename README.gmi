@@ -31,6 +31,7 @@ iroiroiru consists of the following:
 * improve this readme 🙃
 * handle thumbnails from non-inaturalist images (first step: count images)
 * show vernacular names when available
+* allow linking directly to occurrences
 
 ## might be nice to have
 
