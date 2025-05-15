@@ -24,6 +24,9 @@
       <div>
         <p class=locationRemarks>
       </div>
+      <div>
+        <p class=multimedia>
+      </div>
       <table>
         <tr>
           <th>Locality</th>
@@ -101,7 +104,8 @@
       you.slideTo(e.latlng, { duration: 500 });
     }
 
-    const api = "https://api.iroiroiru.jp/here";
+    // const api = "https://api.iroiroiru.jp/here";
+    const api = "http://localhost:8080/here";
     const params = { lat: e.latlng.lat, lon: e.latlng.lng };
     const query = new URLSearchParams(params).toString();
 
@@ -130,6 +134,7 @@
         setText(".coordinates", point);
         setText(".occurrenceRemarks", o.occurrenceRemarks);
         setText(".locationRemarks", o.locationRemarks);
+        setText(".multimedia", o.multimedia);
         setText(".scientificName", o.acceptedScientificName);
         setText(".locality", o.locality || o.verbatimLocality);
         setText(".recordedBy", o.recordedBy);
