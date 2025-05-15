@@ -25,6 +25,9 @@ cover:
 	go test -coverprofile=cover.out
 	go tool cover -html cover.out
 
+peek:
+	caddy file-server --root iroiroview
+
 README.md: README.gmi
 	sisyphus -f markdown <README.gmi >README.md
 
