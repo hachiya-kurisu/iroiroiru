@@ -29,7 +29,7 @@ func importOccurrences(path string, collection *mongo.Collection) {
 	scanner.Scan()
 	headers := strings.Split(scanner.Text(), "\t")
 
-	var docs[]interface{}
+	var docs []interface{}
 	const batchSize = 5000
 
 	count := 0
@@ -95,10 +95,10 @@ func importOccurrences(path string, collection *mongo.Collection) {
 	}
 
 	if len(docs) > 0 {
-			_, err := collection.InsertMany(context.TODO(), docs)
-			if err != nil {
-				log.Fatalf("last occurrence batch failed: %v", err)
-			}
+		_, err := collection.InsertMany(context.TODO(), docs)
+		if err != nil {
+			log.Fatalf("last occurrence batch failed: %v", err)
+		}
 	}
 	fmt.Printf("%d occurrence docs processed\n", count)
 }
@@ -115,7 +115,7 @@ func updateMultimedia(path string, collection *mongo.Collection) {
 	scanner.Scan()
 	headers := strings.Split(scanner.Text(), "\t")
 
-	var models[]mongo.WriteModel
+	var models []mongo.WriteModel
 	const batchSize = 5000
 
 	count := 0
