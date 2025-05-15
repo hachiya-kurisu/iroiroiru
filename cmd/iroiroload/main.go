@@ -139,20 +139,30 @@ func updateMultimedia(path string, collection *mongo.Collection) {
 func main() {
 	occurrencePath := flag.String("o", "", "occurrence data")
 	mediaPath := flag.String("m", "", "multimedia data")
+	mongoURI := flag.String("u", "mongodb://localhost:27017", "mongodb uri")
+	databaseName := flag.String("db", "iroiro", "mongodb database")
+	collectionName := flag.String("c", "occurrences", "mongodb collection")
 
 	flag.Parse()
+
+	if *occurrencePath == "" && *mediaPath == "" {
+		flag.Usage()
+		fmt.Println()
+		fmt.Println("occurrence data (-o) or multimedia data (-m) required")
+		return
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	clientOpts := options.Client().ApplyURI("mongodb://localhost:27017")
+	clientOpts := options.Client().ApplyURI(*mongoURI)
 	client, err := mongo.Connect(ctx, clientOpts)
 	if err != nil {
 		log.Fatalf("failed to connect to mongodb: %v", err)
 	}
 	defer client.Disconnect(ctx)
 
-	collection := client.Database("iroiro").Collection("test")
+	collection := client.Database(*databaseName).Collection(*collectionName)
 
 	if *occurrencePath != "" {
 		importOccurrences(*occurrencePath, collection)
