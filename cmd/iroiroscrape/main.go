@@ -24,9 +24,6 @@ import (
 )
 
 func download(url string, path string) error {
-	fmt.Printf("downloading %s to %s\n", url, path)
-	return nil
-
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
