@@ -49,7 +49,7 @@ func importOccurrences(path string, collection *mongo.Collection) {
 				rawLatitude = v
 			}
 
-			if headers[i] == "decimalLatitude" && v != "" {
+			if headers[i] == "decimalLongitude" && v != "" {
 				rawLongitude = v
 			}
 		}
