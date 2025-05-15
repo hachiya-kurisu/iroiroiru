@@ -25,6 +25,7 @@ iroiroiru consists of the following:
 * iroiroserve - a go api microservice
 * iroiroload - command line tool to ingest occurrence and multimedia data
 * iroiroview - minimalist front-end allowing you to find nearby occurrences
+* iroiroscrape - y...yeah... 🤔
 
 ## definitely doing this
 
