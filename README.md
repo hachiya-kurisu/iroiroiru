@@ -34,7 +34,6 @@ iroiroiru consists of the following:
 ## nice to have
 
 * improve icons
-* iroiroload: bulk insert...?
 * deal with overlapping markers...
 * improve this readme 🙃
 * allow linking directly to occurrences
