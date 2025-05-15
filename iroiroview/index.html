@@ -24,9 +24,6 @@
       <div>
         <p class=locationRemarks>
       </div>
-      <div>
-        <p class=multimedia>
-      </div>
       <table>
         <tr>
           <th>Locality</th>
@@ -57,6 +54,7 @@
           <td class=datasetName></td>
         </tr>
       </table>
+      <div class=multimedia></div>
     </main>
     <footer>
       <div class=grid>
@@ -104,8 +102,13 @@
       you.slideTo(e.latlng, { duration: 500 });
     }
 
-    // const api = "https://api.iroiroiru.jp/here";
-    const api = "http://localhost:8080/here";
+    // second temporary hack 🙃
+    let api = "https://api.iroiroiru.jp/here";
+    if (window.location.hostname === 'localhost') {
+      api = "http://localhost:8080/here";
+    }
+    
+
     const params = { lat: e.latlng.lat, lon: e.latlng.lng };
     const query = new URLSearchParams(params).toString();
 
@@ -134,7 +137,6 @@
         setText(".coordinates", point);
         setText(".occurrenceRemarks", o.occurrenceRemarks);
         setText(".locationRemarks", o.locationRemarks);
-        setText(".multimedia", o.multimedia);
         setText(".scientificName", o.acceptedScientificName);
         setText(".locality", o.locality || o.verbatimLocality);
         setText(".recordedBy", o.recordedBy);
@@ -145,6 +147,24 @@
         setText(".datasetName", o.datasetName);
         setText(".occurrenceID", o.occurrenceID);
         setText(".uncertaintyInMeters", o.coordinateUncertaintyInMeters);
+
+        const multimedia = clone.querySelector(".multimedia")
+        if(o.multimedia) {
+          o.multimedia.forEach(row => {
+            const link = document.createElement("a");
+            const img = document.createElement("img");
+
+            // quick hack until i decide how to do proper thumbnails
+            let src = row.identifier;
+            if(src.startsWith("https://inaturalist-open-data.s3")) {
+              src = src.replace("original.", "medium.");
+            }
+            img.src = src;
+            link.href = row.identifier;
+            link.appendChild(img);
+            multimedia.appendChild(link);
+          })
+        }
 
         const uri = "https://www.gbif.org/occurrence/" + o.gbifID;
         clone.querySelector(".gbifLink").href = uri;

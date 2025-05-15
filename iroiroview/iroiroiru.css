@@ -33,6 +33,12 @@ dialog .source { text-align: left; }
 
 .pico th { font-weight: 700; }
 
+.multimedia {
+  display: flex; flex-wrap: wrap;
+  justify-content: center; align-items: center;
+}
+.multimedia img { border: 1px solid #000; max-width: 128px; }
+
 /* leaflet */
 
 .leaflet-pane,
