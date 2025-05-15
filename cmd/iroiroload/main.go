@@ -1,6 +1,7 @@
 package main
 
 import (
+	"blekksprut.net/iroiroiru"
 	"bufio"
 	"context"
 	"flag"
@@ -142,8 +143,14 @@ func main() {
 	mongoURI := flag.String("u", "mongodb://localhost:27017", "mongodb uri")
 	databaseName := flag.String("db", "iroiro", "mongodb database")
 	collectionName := flag.String("c", "occurrences", "mongodb collection")
+	version := flag.Bool("v", false, "version")
 
 	flag.Parse()
+
+	if *version {
+		fmt.Println(iroiroiru.Version)
+		return
+	}
 
 	if *occurrencePath == "" && *mediaPath == "" {
 		flag.Usage()

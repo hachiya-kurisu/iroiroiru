@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"blekksprut.net/iroiroiru"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
@@ -81,7 +84,24 @@ func here(c *gin.Context) {
 }
 
 func main() {
-	opts := options.Client().ApplyURI("mongodb://localhost:27017")
+	bindURI := flag.String("b", ":8080", "bind uri")
+	mongoURI := flag.String("u", "mongodb://localhost:27017", "mongodb uri")
+	origin := flag.String("o", "*", "cors origin")
+	releaseMode := flag.Bool("r", false, "run in release mode")
+	version := flag.Bool("v", false, "version")
+
+	flag.Parse()
+
+	if *version {
+		fmt.Println(iroiroiru.Version)
+		return
+	}
+
+	if *releaseMode {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
+	opts := options.Client().ApplyURI(*mongoURI)
 	var err error
 	client, err = mongo.Connect(context.Background(), opts)
 	if err != nil {
@@ -102,8 +122,10 @@ func main() {
 
 	r := gin.Default()
 
+	r.SetTrustedProxies(nil)
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"http://localhost"},
+		AllowOrigins: []string{*origin},
 		AllowMethods: []string{
 			http.MethodGet,
 		},
@@ -118,5 +140,5 @@ func main() {
 
 	r.GET("/here", here)
 
-	r.Run()
+	r.Run(*bindURI)
 }
