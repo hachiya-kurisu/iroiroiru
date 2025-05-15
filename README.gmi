@@ -29,9 +29,11 @@ iroiroiru consists of the following:
 ## todo
 
 * improve this readme 🙃
-* show occurrence images (?) or images based on species (?)
+* handle thumbnails from non-inaturalist images (first step: count images)
+* show vernacular names when available
+
+## might be nice to have
+
 * improve icons
-* find more suitable free map tiles?
-* handle vernacular names somehow
-* overlapping markers...
 * iroiroload: bulk insert...?
+* deal with overlapping markers...
