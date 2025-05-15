@@ -29,6 +29,9 @@ func importOccurrences(path string, collection *mongo.Collection) {
 	scanner.Scan()
 	headers := strings.Split(scanner.Text(), "\t")
 
+	var docs[]interface{}
+	const batchSize = 5000
+
 	count := 0
 	for scanner.Scan() {
 		fields := strings.Split(scanner.Text(), "\t")
@@ -78,19 +81,26 @@ func importOccurrences(path string, collection *mongo.Collection) {
 
 		doc = append(doc, bson.E{Key: "location", Value: point})
 
-		_, err = collection.InsertOne(context.TODO(), doc)
-		if err != nil {
-			fmt.Printf("uh oh: %v\n", err)
-			continue
-		}
-
+		docs = append(docs, doc)
 		count++
-		if count%10000 == 0 {
-			fmt.Printf("%d docs...\n", count)
+
+		if len(docs) >= batchSize {
+			_, err := collection.InsertMany(context.TODO(), docs)
+			if err != nil {
+				log.Fatalf("occurrence batch failed: %v", err)
+			}
+			docs = docs[:0]
+			fmt.Printf("%d occurrence docs processed\n", count)
 		}
 	}
 
-	fmt.Printf("done! added %d occurrence docs\n", count)
+	if len(docs) > 0 {
+			_, err := collection.InsertMany(context.TODO(), docs)
+			if err != nil {
+				log.Fatalf("last occurrence batch failed: %v", err)
+			}
+	}
+	fmt.Printf("%d occurrence docs processed\n", count)
 }
 
 func updateMultimedia(path string, collection *mongo.Collection) {
@@ -105,7 +115,11 @@ func updateMultimedia(path string, collection *mongo.Collection) {
 	scanner.Scan()
 	headers := strings.Split(scanner.Text(), "\t")
 
+	var models[]mongo.WriteModel
+	const batchSize = 5000
+
 	count := 0
+
 	for scanner.Scan() {
 		fields := strings.Split(scanner.Text(), "\t")
 
@@ -122,19 +136,28 @@ func updateMultimedia(path string, collection *mongo.Collection) {
 		filter := bson.M{"_id": id}
 		update := bson.M{"$addToSet": bson.M{"multimedia": doc}}
 
-		result, err := collection.UpdateOne(context.TODO(), filter, update)
-		if err != nil {
-			continue
-		}
+		model := mongo.NewUpdateOneModel().SetFilter(filter).SetUpdate(update)
 
-		if result.ModifiedCount > 0 {
-			count++
-			if count%10000 == 0 {
-				fmt.Printf("%d docs...\n", count)
+		models = append(models, model)
+		count++
+
+		if len(models) >= batchSize {
+			_, err := collection.BulkWrite(context.TODO(), models)
+			if err != nil {
+				log.Fatalf("multimedia batch failed: %v", err)
 			}
+			models = models[:0]
+			fmt.Printf("%d multimedia docs processed...\n", count)
 		}
 	}
-	fmt.Printf("finished adding %d multimedia docs\n", count)
+
+	if len(models) > 0 {
+		_, err = collection.BulkWrite(context.TODO(), models)
+		if err != nil {
+			log.Fatalf("final multimedia batch failed: %v", err)
+		}
+		fmt.Printf("%d multimedia docs processed\n", count)
+	}
 }
 
 func main() {
