@@ -24,6 +24,12 @@ import (
 )
 
 func download(url string, path string) error {
+	_, err := os.Stat(path)
+	if err == nil {
+		return nil
+	}
+
+	fmt.Printf("%s => %s\n", url, path)
 	resp, err := http.Get(url)
 	if err != nil {
 		return err
@@ -91,7 +97,6 @@ func main() {
 	defer cursor.Close(ctx)
 
 	for cursor.Next(ctx) {
-
 		var result struct {
 			Identifier string `bson:"identifier"`
 		}
