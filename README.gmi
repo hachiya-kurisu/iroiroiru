@@ -32,6 +32,8 @@ iroiroiru consists of the following:
 * handle thumbnails from non-inaturalist images (first step: count images)
 * show vernacular names when available
 * allow linking directly to occurrences
+* grab all inaturalist images (even nd is ok - inaturalist made the thumbnails)
+* all medium thumbs, about ~20-25gb?
 
 ## might be nice to have
 
