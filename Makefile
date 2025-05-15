@@ -1,12 +1,15 @@
-all: iroiroiru
+all: iroiroserve iroiroload
 
 again: clean all
 
-iroiroiru: iroiroiru.go cmd/iroiroiru/main.go
-	go build -C cmd/iroiroiru -o ../../iroiroiru
+iroiroserve: iroiroiru.go cmd/iroiroserve/main.go
+	go build -C cmd/iroiroserve -o ../../iroiroserve
+
+iroiroload: iroiroiru.go cmd/iroiroload/main.go
+	go build -C cmd/iroiroload -o ../../iroiroload
 
 clean:
-	rm -f iroiroiru
+	rm -f iroiroserve iroiroload
 
 test:
 	go test -cover
@@ -28,7 +31,7 @@ README.md: README.gmi
 doc: README.md
 
 publish:
-	rsync -raz --safe-links --progress www/* iroiroiru.jp:/var/iroiro/www
+	rsync -raz --safe-links --progress iroiroview/* iroiroiru.jp:/var/iroiro/www
 
 release: push
 	git push github --tags
