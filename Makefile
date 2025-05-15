@@ -1,6 +1,9 @@
-all: iroiroserve iroiroload
+all: iroiroserve iroiroload iroiroscrape
 
 again: clean all
+
+iroiroscrape: iroiroiru.go cmd/iroiroscrape/main.go
+	go build -C cmd/iroiroscrape -o ../../iroiroscrape
 
 iroiroserve: iroiroiru.go cmd/iroiroserve/main.go
 	go build -C cmd/iroiroserve -o ../../iroiroserve
@@ -9,7 +12,7 @@ iroiroload: iroiroiru.go cmd/iroiroload/main.go
 	go build -C cmd/iroiroload -o ../../iroiroload
 
 clean:
-	rm -f iroiroserve iroiroload
+	rm -f iroiroserve iroiroload iroiroscrape
 
 test:
 	go test -cover
