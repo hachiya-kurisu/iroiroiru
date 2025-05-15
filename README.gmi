@@ -26,17 +26,20 @@ iroiroiru consists of the following:
 * iroiroload - command line tool to ingest occurrence and multimedia data
 * iroiroview - minimalist front-end allowing you to find nearby occurrences
 
-## todo
+## definitely doing this
 
-* improve this readme 🙃
-* handle thumbnails from non-inaturalist images (first step: count images)
 * show vernacular names when available
-* allow linking directly to occurrences
-* grab all inaturalist images (even nd is ok - inaturalist made the thumbnails)
-* all medium thumbs, about ~20-25gb?
 
-## might be nice to have
+## nice to have
 
 * improve icons
 * iroiroload: bulk insert...?
 * deal with overlapping markers...
+* improve this readme 🙃
+* allow linking directly to occurrences
+
+## specific to iroiroiru.jp
+
+* grab all inaturalist images (even nd is ok - inaturalist made the thumbnails)
+* all medium thumbs, about ~20-25gb?
+* handle thumbnails from non-inaturalist images (first step: count images)
