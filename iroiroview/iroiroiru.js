@@ -1,4 +1,4 @@
-const key = '<protomaps key>';
+const key = '<protomaps api key>';
 const map = new maplibregl.Map({
   container: 'map',
   style: 'https://api.protomaps.com/styles/v5/light/ja.json?key=' + key,
@@ -20,8 +20,10 @@ map.on('load', () => {
       new Promise((resolve, reject) => {
         const img = new Image();
         img.src = url;
-        map.addImage(url, img);
-        resolve();
+        img.onload = function(e) {
+          map.addImage(url, e.target);
+          resolve();
+        }
       })
     )
   ).then(() => {
@@ -68,6 +70,7 @@ map.on('click', 'occurrenceLayer', function(e) {
   setText(".datasetName", o.datasetName);
   setText(".occurrenceID", o.occurrenceID);
   setText(".uncertaintyInMeters", o.coordinateUncertaintyInMeters);
+  setText(".distance", o.dist.calculated.toFixed(0) + "メートル先");
 
   const multimedia = clone.querySelector(".multimedia")
   if(o.multimedia) {
@@ -122,11 +125,10 @@ geolocate.on('geolocate', (e) => {
 
   document.getElementById("spinner").setAttribute("aria-busy", true);
 
-  console.log('fetching!');
   fetch(`${api}?${query}`).then(response => {
     document.getElementById("spinner").setAttribute("aria-busy", false);
     if (!response.ok) {
-      throw new Error("response not ok: " + response.statusText);
+      throw new Error("oops: " + response.statusText);
     }
     return response.json();
   }).then(occurrences => {
