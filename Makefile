@@ -37,7 +37,7 @@ README.md: README.gmi
 doc: README.md
 
 publish:
-	rsync -raz --safe-links --progress iroiroview/* iroiroiru.jp:/var/iroiro/www
+	rsync -raz --safe-links --progress iroiroview/* iroiroiru:/var/iroiro/www
 
 release: push
 	git push github --tags
