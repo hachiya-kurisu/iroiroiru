@@ -48,7 +48,7 @@ func here(c *gin.Context) {
 			{"near", point},
 			{"distanceField", "dist.calculated"},
 			{"spherical", true},
-			{"maxDistance", 1000},
+			{"maxDistance", 400},
 		}},
 	})
 
