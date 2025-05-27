@@ -30,11 +30,11 @@ iroiroiru consists of the following:
 ## definitely doing this
 
 * show vernacular names when available
+* rename the various tools 😂
 
 ## nice to have
 
 * improve icons
-* deal with overlapping markers...
 * improve this readme 🙃
 * allow linking directly to occurrences
 
