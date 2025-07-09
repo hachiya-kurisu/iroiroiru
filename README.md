@@ -43,3 +43,7 @@ iroiroiru consists of the following:
 * grab all inaturalist images (even nd is ok - inaturalist made the thumbnails)
 * all medium thumbs, about ~20-25gb?
 * handle thumbnails from non-inaturalist images (first step: count images)
+
+## author
+
+[蜂谷栗栖](https://blekksprut.net/)
